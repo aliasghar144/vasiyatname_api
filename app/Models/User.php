@@ -2,32 +2,48 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Lumen\Auth\Authorizable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Auth\Authenticatable; // اضافه کن
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Model implements AuthenticatableContract
 {
-    use Authenticatable, Authorizable, HasFactory;
+    use Authenticatable, HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
+    protected $table = 'users';
+
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
-        'name', 'email',
+        'mobile',
+        'first_name',
+        'last_name',
+        'birth_date',
+        'national_code',
+        'is_married',
+        'children_count',
+        'wife_count',
+        'province',
+        'city',
+        'address'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var string[]
-     */
-    protected $hidden = [
-        'password',
+    public $timestamps = true;
+
+    protected $casts = [
+        'mobile' => 'string',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'province' => 'string',
+        'address' => 'string',
+        'city' => 'string',
+        'national_code' => 'string',
+        'children_count' => 'integer',
+        'is_married' => 'bool',
+        'wife_count' => 'integer',
+        'birth_date' => 'date',
     ];
 }

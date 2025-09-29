@@ -9,6 +9,10 @@ enum ApiSlug: string
     case NEED_SIGN_IN = 'NEED_SIGN_IN';
     case OTP_SENT = 'OTP_SENT';
     case OTP_INVALID = 'OTP_INVALID';
+    case OTP_SEND = 'OTP_SEND';
+    case OTP_EXPIRED = 'OTP_EXPIRED';
+    case VERIFIED_SUCCESSFULLY = 'VERIFIED_SUCCESSFULLY';
+    case MOBILE_REQUIRED = 'MOBILE_REQUIRED';
 
     // Profile
     case PROFILE_UPDATED = 'PROFILE_UPDATED';

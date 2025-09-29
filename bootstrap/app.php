@@ -23,9 +23,9 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// $app->withFacades();
+ $app->withFacades();
 
-// $app->withEloquent();
+ $app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +60,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -72,9 +73,12 @@ $app->configure('app');
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'sanctum' => App\Http\Middleware\SanctumAuth::class,
+    'throttle' => App\Http\Middleware\ThrottleRequests::class,
+
+]);
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
@@ -90,6 +94,12 @@ $app->configure('app');
 | totally optional, so you are not required to uncomment this line.
 |
 */
+
+$app->register(Illuminate\Database\MigrationServiceProvider::class);
+$app->register(Illuminate\Auth\AuthServiceProvider::class);
+//$app->register(Laravel\Sanctum\SanctumServiceProvider::class);
+
+//$app->register(Laravel\Sanctum\SanctumServiceProvider::class);
 
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);

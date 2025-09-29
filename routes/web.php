@@ -1,5 +1,6 @@
 <?php
 
+
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
@@ -13,6 +14,15 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+
+$router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () use ($router) {
+    $router->post('/auth/check_mobile', 'AuthController@checkMobile');
+    $router->post('/auth/verify_otp', 'AuthController@verifyOtp');
+});
+
+$router->group([
+    'prefix' => 'user',
+    'middleware' => 'sanctum',
+], function () use ($router) {
+    $router->post('/complete_profile', 'ProfileController@completeProfile');
 });

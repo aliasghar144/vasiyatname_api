@@ -3,54 +3,85 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApiSlug;
-use App\Helpers\Slug;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
 
     public function checkMobile(Request $request): \Illuminate\Http\JsonResponse
     {
-        $request->validate(['mobile' => 'required']);
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required|string|min:10|max:15',
+        ]);
 
-        $user = User::where('mobile', $request->mobile)->first();
-
-        if ($user) {
-            $token = bin2hex(random_bytes(16));
-            return $this->success([
-                'mobile' => $user->mobile,
-                'token' => $token,
-            ], Slug::login(ApiSlug::LOGIN_SUCCESS));
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->first('mobile'), ApiSlug::MOBILE_REQUIRED->value, 400);
         }
 
-        return $this->error('شماره موبایل در سیستم موجود نیست', Slug::login(ApiSlug::NEED_SIGN_IN), 404);
+        $lastOtpTime = Cache::get('otp_time_' . $request->mobile);
+        if ($lastOtpTime && Carbon::now()->diffInSeconds($lastOtpTime) < 120) {
+            $secondsLeft = 120 - Carbon::now()->diffInSeconds($lastOtpTime);
+            return $this->error(
+                "لطفا $secondsLeft ثانیه دیگر دوباره تلاش کنید.",
+                ApiSlug::OTP_SEND->value,
+                429 // HTTP 429 Too Many Requests
+            );
+        }
+
+        $otp = 11111;
+        Cache::put('otp_' . $request->mobile, $otp, Carbon::now()->addMinutes(3));
+        //TODO: uncomment below line after put on server
+//        Cache::put('otp_time_' . $request->mobile, Carbon::now(), Carbon::now()->addMinutes(2));
+
+        return $this->success([
+            'mobile' => $request->mobile,
+            //TODO: remove the OTP from the response
+            'otp' => $otp
+        ], ApiSlug::OTP_SEND->value);
+
     }
 
-
-    public function completeProfile(Request $request): \Illuminate\Http\JsonResponse
+    public function verifyOtp(Request $request): \Illuminate\Http\JsonResponse
     {
-        $request->validate(['mobile' => 'required']);
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required|string|min:10|max:15',
+            'otp' => 'required|numeric|digits:5',
+        ]);
 
-        $user = User::firstOrCreate(
-            ['mobile' => $request->mobile],
-            $request->only([
-                'first_name', 'last_name', 'birth_date', 'national_code',
-                'marital_status', 'children_count', 'spouses_count',
-                'province', 'city', 'address'
-            ])
-        );
+        if ($validator->fails()) {
+            return $this->error($validator->errors()->first(), ApiSlug::OTP_INVALID->value, 400);
+        }
 
-        $user->update($request->only([
-            'first_name', 'last_name', 'birth_date', 'national_code',
-            'marital_status', 'children_count', 'spouses_count',
-            'province', 'city', 'address'
-        ]));
+        $cachedOtp = Cache::get('otp_' . $request->mobile);
 
-        $token = bin2hex(random_bytes(16));
+        if (!$cachedOtp) {
+            return $this->error('کد OTP منقضی شده یا وجود ندارد', ApiSlug::OTP_EXPIRED->value, 400);
+        }
+
+        if ((int)$request->otp !== (int)$cachedOtp) {
+            return $this->error('کد OTP نادرست است', ApiSlug::OTP_INVALID->value, 400);
+        }
+
+        // اصلاح: استفاده از first + create به جای firstOrCreate
+        $user = User::where('mobile', $request->mobile)->first();
+        if (!$user) {
+            $user = User::create(['mobile' => $request->mobile]);
+        }
+
+        Cache::forget('otp_' . $request->mobile);
+
+        $token = $user->createToken('vasiyat_app',['read', 'write'],Carbon::now()->addDays(30))->plainTextToken;
+
         return $this->success([
             'mobile' => $user->mobile,
             'token' => $token,
-        ], Slug::login(ApiSlug::LOGIN_SUCCESS));
+        ], ApiSlug::VERIFIED_SUCCESSFULLY->value);
     }
+
+
+
 }
