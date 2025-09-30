@@ -12,7 +12,7 @@ class BaseController extends Controller
         return response()->json([
             'code' => $code,
             'slug' => $slug,
-            'error' => null,
+            'message' => null,
             'data' => $data
         ], $code);
     }
@@ -23,7 +23,7 @@ class BaseController extends Controller
         return response()->json([
             'code' => $code,
             'slug' => $slug,
-            'error' => $message,
+            'message' => $message,
             'data' => $data
         ], $code);
     }

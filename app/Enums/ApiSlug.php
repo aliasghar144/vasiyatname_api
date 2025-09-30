@@ -14,6 +14,11 @@ enum ApiSlug: string
     case VERIFIED_SUCCESSFULLY = 'VERIFIED_SUCCESSFULLY';
     case MOBILE_REQUIRED = 'MOBILE_REQUIRED';
 
+
+    // From Validate
+    case VALIDATION_ERROR = 'VALIDATION_ERROR';
+
+
     // Profile
     case PROFILE_UPDATED = 'PROFILE_UPDATED';
     case PROFILE_NOT_FOUND = 'PROFILE_NOT_FOUND';
@@ -21,6 +26,8 @@ enum ApiSlug: string
     // Financial
     case DEBT_ADDED = 'DEBT_ADDED';
     case DEBT_REMOVED = 'DEBT_REMOVED';
+    case DEBT_DELETED = 'DEBT_DELETED';
+    case DEBT_UPDATED = 'DEBT_UPDATED';
 
     // General
     case UNAUTHORIZED = 'UNAUTHORIZED';

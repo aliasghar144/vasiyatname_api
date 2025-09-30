@@ -20,6 +20,38 @@ $router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () us
     $router->post('/auth/verify_otp', 'AuthController@verifyOtp');
 });
 
+
+$router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' => 'Financial'], function () use ($router) {
+    $router->group(['prefix'=>'debts'],function()use($router){
+        $router->get('/', 'DebtController@index');
+        $router->post('/', 'DebtController@store');
+        $router->put('/{id}', 'DebtController@update');
+        $router->delete('/{id}', 'DebtController@destroy');
+    });
+    $router->group(['prefix'=>'claim'],function()use($router){
+        $router->get('/', 'ClaimController@index');
+        $router->post('/', 'ClaimController@store');
+        $router->put('/{id}', 'ClaimController@update');
+        $router->delete('/{id}', 'ClaimController@destroy');
+    });
+});
+
+$router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
+    $router->group(['prefix'=>'prayers'],function()use($router){
+        $router->get('/', 'DebtController@index');
+        $router->post('/', 'DebtController@store');
+        $router->put('/{id}', 'DebtController@update');
+        $router->delete('/{id}', 'DebtController@destroy');
+    });
+    $router->group(['prefix'=>'claim'],function()use($router){
+        $router->get('/', 'ClaimController@index');
+        $router->post('/', 'ClaimController@store');
+        $router->put('/{id}', 'ClaimController@update');
+        $router->delete('/{id}', 'ClaimController@destroy');
+    });
+});
+
+
 $router->group([
     'prefix' => 'user',
     'middleware' => 'sanctum',
