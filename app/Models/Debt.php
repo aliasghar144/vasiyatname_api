@@ -9,17 +9,18 @@ class Debt extends Model
     protected $table = 'debts';
 
     protected $fillable = [
-        'title',
-        'type',
+        'from',
+        'debt_type',
+        'bank_name',
         'amount',
-        'amount_paid',
-        'created_date',
-        'due_date',
         'status',
-        'full_name',
-        'national_id'
     ];
 
     public $timestamps = true;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

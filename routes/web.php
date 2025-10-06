@@ -30,6 +30,7 @@ $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' 
     });
     $router->group(['prefix'=>'claim'],function()use($router){
         $router->get('/', 'ClaimController@index');
+        $router->get('/details/{id}', 'ClaimController@detailsindex');
         $router->post('/', 'ClaimController@store');
         $router->put('/{id}', 'ClaimController@update');
         $router->delete('/{id}', 'ClaimController@destroy');
@@ -38,17 +39,17 @@ $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' 
 
 $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
     $router->group(['prefix'=>'prayers'],function()use($router){
-        $router->get('/', 'DebtController@index');
-        $router->post('/', 'DebtController@store');
-        $router->put('/{id}', 'DebtController@update');
-        $router->delete('/{id}', 'DebtController@destroy');
+        $router->get('/', 'PrayersController@index');
+        $router->post('/', 'PrayersController@store');
+        $router->put('/{id}', 'PrayersController@update');
+        $router->delete('/{id}', 'PrayersController@destroy');
     });
-    $router->group(['prefix'=>'claim'],function()use($router){
-        $router->get('/', 'ClaimController@index');
-        $router->post('/', 'ClaimController@store');
-        $router->put('/{id}', 'ClaimController@update');
-        $router->delete('/{id}', 'ClaimController@destroy');
-    });
+//    $router->group(['prefix'=>'claim'],function()use($router){
+//        $router->get('/', 'ClaimController@index');
+//        $router->post('/', 'ClaimController@store');
+//        $router->put('/{id}', 'ClaimController@update');
+//        $router->delete('/{id}', 'ClaimController@destroy');
+//    });
 });
 
 
@@ -57,4 +58,6 @@ $router->group([
     'middleware' => 'sanctum',
 ], function () use ($router) {
     $router->post('/complete_profile', 'ProfileController@completeProfile');
+    $router->get('/', 'ProfileController@getInformation');
+    $router->post('/logout',action: "ProfileController@logout");
 });

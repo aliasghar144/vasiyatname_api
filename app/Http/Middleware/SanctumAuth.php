@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Enums\ApiSlug;
 
 class SanctumAuth
 {
@@ -11,14 +12,22 @@ class SanctumAuth
     {
         $header = $request->header('Authorization');
         if (!$header || !str_starts_with($header, 'Bearer ')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json([
+                'code' => 401,
+                'slug' => ApiSlug::UNAUTHORIZED->value,
+                'message' => 'عدم دسترسی',
+            ], 401);
         }
 
         $token = substr($header, 7);
         $accessToken = PersonalAccessToken::findToken($token);
 
         if (!$accessToken) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json([
+                'code' => 401,
+                'slug' => ApiSlug::UNAUTHORIZED->value,
+                'message' => 'عدم دسترسی',
+            ], 401);
         }
 
         // چک انقضا در صورتی که استفاده میکنید

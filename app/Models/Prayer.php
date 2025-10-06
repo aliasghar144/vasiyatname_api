@@ -10,6 +10,7 @@ class Prayer extends  Model{
 
     protected $fillable = [
         'type',
+        'user_id',
         'rakats',
         'status',
         'date',
@@ -18,5 +19,9 @@ class Prayer extends  Model{
 
     public $timestamps = true;
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

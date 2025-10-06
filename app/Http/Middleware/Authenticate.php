@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Enums\ApiSlug;
 use Illuminate\Contracts\Auth\Factory as Auth;
 
 class Authenticate
@@ -36,7 +37,11 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            return response()->json([
+                'code' => 401,
+                'slug' => ApiSlug::UNAUTHORIZED->value,
+                'message' => 'عدم دسترسی',
+            ], 401);
         }
 
         return $next($request);

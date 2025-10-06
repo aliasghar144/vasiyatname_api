@@ -13,19 +13,31 @@ class ProfileController extends BaseController
     public function completeProfile(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->only([
-            'first_name', 'last_name', 'birth_date', 'national_code',
-            'marital_status', 'children_count', 'spouses_count',
-            'province', 'city', 'address', 'mobile'
+            'first_name',
+            'last_name',
+            'birth_date',
+            'national_code',
+            'marital_status',
+            'children_count',
+            'wife_count',
+            'province',
+            'city',
+            'address',
+            'mobile',
+            'email',
+            'home_phone',
+            'father_name',
+            'birth_loc'
         ]);
 
-        if (!empty($data['birth_date'])) {
-            // انتظار فرمت: "YYYY/MM/DD" یا "YYYY-MM-DD"
-            $parts = preg_split('/[\/\-]/', $data['birth_date']);
-            if (count($parts) !== 3) {
-                return $this->error('فرمت تاریخ صحیح نیست.', ApiSlug::PROFILE_NOT_FOUND->value, 400);
-            }
-            $data['birth_date'] = jalaliToGregorian($parts[0], $parts[1], $parts[2]);
-        }
+        // if (!empty($data['birth_date'])) {
+        //     // انتظار فرمت: "YYYY/MM/DD" یا "YYYY-MM-DD"
+        //     $parts = preg_split('/[\/\-]/', $data['birth_date']);
+        //     if (count($parts) !== 3) {
+        //         return $this->error('فرمت تاریخ صحیح نیست.', ApiSlug::PROFILE_NOT_FOUND->value, 400);
+        //     }
+        //     $data['birth_date'] = jalaliToGregorian($parts[0], $parts[1], $parts[2]);
+        // }
 
         $user = User::firstOrCreate(['mobile' => $data['mobile']], $data);
         $user->update($data);
@@ -33,6 +45,32 @@ class ProfileController extends BaseController
         return $this->success($user, ApiSlug::PROFILE_UPDATED->value);
     }
 
+    public function getInformation(Request $request): \Illuminate\Http\JsonResponse
+    {
+                $user = auth()->user();
+        $data = User::where('id', $user->id)->get();
+        if($data){
+        return $this->success($data);
+        }else{
+        return $this->error('کابر یافت نشد',ApiSlug::PROFILE_NOT_FOUND->value);
+
+        }
+    }
+
+
+
+public function logout(Request $request): \Illuminate\Http\JsonResponse
+{
+    $user = $request->user();
+
+    if (!$user) {
+        return $this->error('کاربر یافت نشد.', ApiSlug::PROFILE_NOT_FOUND->value, 404);
+    }
+
+    $user->tokens()->delete();
+
+    return $this->success(null, ApiSlug::LOGOUT_SUCCESS->value);
+}
 
 }
 

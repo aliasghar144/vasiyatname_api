@@ -19,9 +19,13 @@ class User extends Model implements AuthenticatableContract
 
     protected $fillable = [
         'mobile',
+        'email',
+        'home_phone',
         'first_name',
         'last_name',
+        'father_name',
         'birth_date',
+        'birth_loc',
         'national_code',
         'is_married',
         'children_count',

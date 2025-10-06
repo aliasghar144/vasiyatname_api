@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Financial;
 
+use App\Enums\ApiSlug;
 use App\Http\Controllers\BaseController;
-use Laravel\Lumen\Routing\Controller;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Debt;
 
@@ -11,9 +12,11 @@ class DebtController extends BaseController
 {
     public function index()
     {
-        $mardomi = Debt::where('type', 'mardomi')->get();
-        $banki = Debt::where('type', 'banki')->get();
-        $mehriye = Debt::where('type', 'mehriye')->get();
+        $user = auth()->user();
+
+        $mardomi = Debt::where('user_id',$user->id)->where('type', 'mardomi')->get();
+        $banki = Debt::where('user_id',$user->id)->where('type', 'banki')->get();
+        $mehriye = Debt::where('user_id',$user->id)->where('type', 'mehriye')->get();
 
         return $this->success([
             'mardomi' => $mardomi,
@@ -25,7 +28,9 @@ class DebtController extends BaseController
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate([
+            $user = auth()->user();
+
+            $validator = Validator::make($request->all(), [
                 'title' => 'required|string',
                 'type' => 'required|in:mardomi,banki,mehriye',
                 'amount' => 'required|integer',
@@ -37,11 +42,17 @@ class DebtController extends BaseController
                 'national_id' => 'nullable|string',
             ]);
 
-            $debt = Debt::create($validated);
+            if ($validator->fails()) {
+                return $this->error($validator->errors()->first(), ApiSlug::VALIDATION_ERROR->value, 400);
+            }
 
-            return $this->success($debt, 'debt_created', 201);
+            $debt = Debt::create(array_merge($validator->validated(), [
+                'user_id' => $user->id
+            ]));
+
+            return $this->success($debt, ApiSlug::DEBT_ADDED->value);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 'debt_store_failed', 422);
+            return $this->error($e->getMessage(), ApiSlug::DEBT_STORE_FAILED->value, 422);
         }
     }
 
@@ -49,9 +60,19 @@ class DebtController extends BaseController
     public function update($id, Request $request)
     {
         try {
-            $debt = Debt::findOrFail($id);
+            $user = auth()->user();
 
-            $validated = $request->validate([
+            $debt = Debt::where('id',$id)->where('user_id', $user->id)->first();
+
+            if (!$debt) {
+                return $this->error(
+                    'Debt not found or you do not have permission to update it',
+                    ApiSlug::PRAYER_REMOVE_FAILED->value,
+                    404
+                );
+            }
+
+            $validator = Validator::make($request->all(), [
                 'title' => 'sometimes|required|string',
                 'type' => 'sometimes|required|in:mardomi,banki,mehriye',
                 'amount' => 'sometimes|required|integer',
@@ -63,11 +84,11 @@ class DebtController extends BaseController
                 'national_id' => 'nullable|string',
             ]);
 
-            $debt->update($validated);
+            $debt->update($validator->validated());
 
-            return $this->success($debt, 'debt_updated');
+            return $this->success($debt, ApiSlug::DEBT_UPDATED->value);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 'debt_update_failed', 422);
+            return $this->error($e->getMessage(), ApiSlug::DEBT_UPDATED_FAILED->value, 422);
         }
     }
 
@@ -75,12 +96,21 @@ class DebtController extends BaseController
     public function destroy($id)
     {
         try {
-            $debt = Debt::findOrFail($id);
+            $user = auth()->user();
+
+            $debt = Debt::where('id',$id)->where('user_id', $user->id)->first();
+            if (!$debt) {
+                return $this->error(
+                    'Debt not found or you do not have permission to delete it',
+                    ApiSlug::PRAYER_REMOVE_FAILED->value,
+                    404
+                );
+            }
             $debt->delete();
 
-            return $this->success(null, 'debt_deleted');
+            return $this->success(null, ApiSlug::DEBT_REMOVED->value);
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 'debt_delete_failed', 422);
+            return $this->error($e->getMessage(), ApiSlug::DEBT_REMOVED_FAILED->value, 422);
         }
     }
 }

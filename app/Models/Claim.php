@@ -10,13 +10,10 @@ class Claim extends Model
     protected $fillable = [
         'user_id',
         'from',
-        'relation',
-        'due_date',
-        'subject',
+        'claim_type',
         'amount',
-        'check_number',
-        'status',
         'description',
+        'status',
     ];
 
     // ارتباط با کاربر

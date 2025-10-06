@@ -32,7 +32,7 @@ class AuthController extends BaseController
             );
         }
 
-        $otp = 11111;
+        $otp = 1111;
         Cache::put('otp_' . $request->mobile, $otp, Carbon::now()->addMinutes(3));
         //TODO: uncomment below line after put on server
 //        Cache::put('otp_time_' . $request->mobile, Carbon::now(), Carbon::now()->addMinutes(2));
@@ -49,7 +49,7 @@ class AuthController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'mobile' => 'required|string|min:10|max:15',
-            'otp' => 'required|numeric|digits:5',
+            'otp' => 'required|numeric|digits:4',
         ]);
 
         if ($validator->fails()) {
@@ -77,7 +77,7 @@ class AuthController extends BaseController
         $token = $user->createToken('vasiyat_app',['read', 'write'],Carbon::now()->addDays(30))->plainTextToken;
 
         return $this->success([
-            'mobile' => $user->mobile,
+            'user' => $user,
             'token' => $token,
         ], ApiSlug::VERIFIED_SUCCESSFULLY->value);
     }

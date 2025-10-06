@@ -12,19 +12,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
             $table->string('from');       // طلب از
-            $table->string('relation');   // نسبت
-            $table->date('due_date')->nullable(); // تاریخ پرداخت
-            $table->string('subject');    // موضوع
-            $table->decimal('amount', 15, 2); // مبلغ
-            $table->string('check_number')->nullable(); // شماره چک
-            $table->enum('status', ['pending', 'received'])->default('pending'); // وضعیت
+            $table->enum('claim_type', ['financial', 'none_financial'])->default('financial'); // وضعیت
+            $table->integer('amount'); // مبلغ
             $table->text('description')->nullable();   // توضیحات
+            $table->enum('status', ['pending', 'received'])->default('pending'); // وضعیت
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('debts');
+        Schema::dropIfExists('claims');
     }
 };
