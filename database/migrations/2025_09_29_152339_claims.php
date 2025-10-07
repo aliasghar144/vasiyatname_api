@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
             $table->string('from');       // طلب از
             $table->enum('claim_type', ['financial', 'none_financial'])->default('financial'); // وضعیت
-            $table->integer('amount'); // مبلغ
+            $table->bigInteger('amount'); // مبلغ
             $table->text('description')->nullable();   // توضیحات
             $table->enum('status', ['pending', 'received'])->default('pending'); // وضعیت
             $table->timestamps();

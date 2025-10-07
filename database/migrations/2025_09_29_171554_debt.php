@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('debts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
-            $table->string('from');
+            $table->string('from')->nullable();
             $table->enum('debt_type', ['mardomi', 'banki'])->default('mardomi');
             $table->string('bank_name')->nullable();
-            $table->integer('amount');
-            $table->dateTime('due_date');
-            $table->enum('status', ['pending', 'received'])->default('pending'); // وضعیت
+            $table->bigInteger('amount')->nullable();
+            $table->string('description')->nullable();
+            $table->dateTime('due_date')->nullable();
             $table->timestamps();
         });
     }

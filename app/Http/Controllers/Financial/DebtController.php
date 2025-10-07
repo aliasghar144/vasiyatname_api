@@ -14,14 +14,12 @@ class DebtController extends BaseController
     {
         $user = auth()->user();
 
-        $mardomi = Debt::where('user_id',$user->id)->where('type', 'mardomi')->get();
-        $banki = Debt::where('user_id',$user->id)->where('type', 'banki')->get();
-        $mehriye = Debt::where('user_id',$user->id)->where('type', 'mehriye')->get();
+        $mardomi = Debt::where('user_id',$user->id)->where('debt_type', 'mardomi')->get(['id', 'from', 'amount']);
+        $banki = Debt::where('user_id',$user->id)->where('debt_type', 'banki')->get(['id', 'bank_name', 'amount']);
 
         return $this->success([
             'mardomi' => $mardomi,
             'banki' => $banki,
-            'mehriye' => $mehriye,
         ]);
     }
 
@@ -29,17 +27,13 @@ class DebtController extends BaseController
     {
         try {
             $user = auth()->user();
-
             $validator = Validator::make($request->all(), [
-                'title' => 'required|string',
-                'type' => 'required|in:mardomi,banki,mehriye',
-                'amount' => 'required|integer',
-                'amount_paid' => 'required|integer',
-                'created_date' => 'required|date',
-                'due_date' => 'required|date',
-                'status' => 'required|string',
-                'full_name' => 'required|string',
-                'national_id' => 'nullable|string',
+                'from' => 'string',
+                'debt_type' => 'required|in:mardomi,banki',
+                'bank_name' => 'string',
+                'description' => 'string',
+                'amount' => 'integer',
+                'due_date' => 'date',
             ]);
 
             if ($validator->fails()) {
@@ -73,15 +67,12 @@ class DebtController extends BaseController
             }
 
             $validator = Validator::make($request->all(), [
-                'title' => 'sometimes|required|string',
-                'type' => 'sometimes|required|in:mardomi,banki,mehriye',
-                'amount' => 'sometimes|required|integer',
-                'amount_paid' => 'sometimes|required|integer',
-                'created_date' => 'sometimes|required|date',
-                'due_date' => 'sometimes|required|date',
-                'status' => 'sometimes|required|string',
-                'full_name' => 'sometimes|required|string',
-                'national_id' => 'nullable|string',
+                'amount' => 'sometimes|integer',
+                'due_date' => 'sometimes|date',
+                'from' => 'string',
+                'debt_type' => 'required|in:mardomi,banki',
+                'bank_name' => 'string',
+                'description' => 'string',
             ]);
 
             $debt->update($validator->validated());

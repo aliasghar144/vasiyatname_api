@@ -9,11 +9,13 @@ class Debt extends Model
     protected $table = 'debts';
 
     protected $fillable = [
+        'user_id',
         'from',
         'debt_type',
+        'due_date',
         'bank_name',
         'amount',
-        'status',
+        'description',
     ];
 
     public $timestamps = true;
