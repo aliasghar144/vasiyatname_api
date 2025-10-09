@@ -23,6 +23,18 @@ class DebtController extends BaseController
         ]);
     }
 
+    public function detailsindex($id)
+    {
+        $user = auth()->user();
+        $debt = Debt::where('user_id', $user->id)
+            ->where('id', $id)
+            ->first();
+        if (!$debt) {
+            return $this->error('طلب یافت نشد', ApiSlug::DEBT_NOTFOUND->value);
+        }
+        return $this->success($debt,ApiSlug::DEBT_FOUND->value);
+    }
+
     public function store(Request $request)
     {
         try {

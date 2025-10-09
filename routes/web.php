@@ -24,6 +24,7 @@ $router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () us
 $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' => 'Financial'], function () use ($router) {
     $router->group(['prefix'=>'debts'],function()use($router){
         $router->get('/', 'DebtController@index');
+        $router->get('/details/{id}', 'DebtController@detailsindex');
         $router->post('/', 'DebtController@store');
         $router->put('/{id}', 'DebtController@update');
         $router->delete('/{id}', 'DebtController@destroy');
