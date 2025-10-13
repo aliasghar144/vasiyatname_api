@@ -9,12 +9,19 @@ class Prayer extends  Model{
     protected $table = 'prayers';
 
     protected $fillable = [
-        'type',
         'user_id',
-        'rakats',
-        'status',
-        'date',
-        'description',
+        'fajr_prayer',
+        'dhuhr_prayer',
+        'asr_prayer',
+        'maghrib_prayer',
+        'isha_prayer',
+        'fajr_prayer_rec',
+        'dhuhr_prayer_rec',
+        'asr_prayer_rec',
+        'maghrib_prayer_rec',
+        'isha_prayer_rec',
+        'ayat_rec',
+        'ayat',
     ];
 
     public $timestamps = true;

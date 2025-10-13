@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApiSlug;
+use App\Models\Prayer;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;

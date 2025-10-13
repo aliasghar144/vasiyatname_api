@@ -22,14 +22,14 @@ $router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () us
 
 
 $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' => 'Financial'], function () use ($router) {
-    $router->group(['prefix'=>'debts'],function()use($router){
+    $router->group(['prefix' => 'debts'], function () use ($router) {
         $router->get('/', 'DebtController@index');
         $router->get('/details/{id}', 'DebtController@detailsindex');
         $router->post('/', 'DebtController@store');
         $router->put('/{id}', 'DebtController@update');
         $router->delete('/{id}', 'DebtController@destroy');
     });
-    $router->group(['prefix'=>'claim'],function()use($router){
+    $router->group(['prefix' => 'claim'], function () use ($router) {
         $router->get('/', 'ClaimController@index');
         $router->get('/details/{id}', 'ClaimController@detailsindex');
         $router->post('/', 'ClaimController@store');
@@ -39,18 +39,23 @@ $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' 
 });
 
 $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
-    $router->group(['prefix'=>'prayers'],function()use($router){
+    
+    $router->group(['prefix' => 'prayers'], function () use ($router) {
         $router->get('/', 'PrayersController@index');
-        $router->post('/', 'PrayersController@store');
-        $router->put('/{id}', 'PrayersController@update');
-        $router->delete('/{id}', 'PrayersController@destroy');
+        $router->put('/', 'PrayersController@update');
     });
-//    $router->group(['prefix'=>'claim'],function()use($router){
-//        $router->get('/', 'ClaimController@index');
-//        $router->post('/', 'ClaimController@store');
-//        $router->put('/{id}', 'ClaimController@update');
-//        $router->delete('/{id}', 'ClaimController@destroy');
-//    });
+
+    $router->group(['prefix' => 'fasting'], function () use ($router) {
+        $router->get('/', 'FastingController@index');
+        $router->put('/', 'FastingController@update');
+    });
+
+    //    $router->group(['prefix'=>'claim'],function()use($router){
+    //        $router->get('/', 'ClaimController@index');
+    //        $router->post('/', 'ClaimController@store');
+    //        $router->put('/{id}', 'ClaimController@update');
+    //        $router->delete('/{id}', 'ClaimController@destroy');
+    //    });
 });
 
 
@@ -60,5 +65,5 @@ $router->group([
 ], function () use ($router) {
     $router->post('/complete_profile', 'ProfileController@completeProfile');
     $router->get('/', 'ProfileController@getInformation');
-    $router->post('/logout',action: "ProfileController@logout");
+    $router->post('/logout', action: "ProfileController@logout");
 });
