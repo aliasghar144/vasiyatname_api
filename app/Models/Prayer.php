@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Prayer extends  Model{
+class Prayer extends Model
+{
 
     protected $table = 'prayers';
 
@@ -25,6 +26,22 @@ class Prayer extends  Model{
     ];
 
     public $timestamps = true;
+
+    protected $casts = [
+        'user_id' => 'integer',
+        'fajr_prayer' => 'integer',
+        'dhuhr_prayer' => 'integer',
+        'asr_prayer' => 'integer',
+        'maghrib_prayer' => 'integer',
+        'isha_prayer' => 'integer',
+        'fajr_prayer_rec' => 'integer',
+        'dhuhr_prayer_rec' => 'integer',
+        'asr_prayer_rec' => 'integer',
+        'maghrib_prayer_rec' => 'integer',
+        'isha_prayer_rec' => 'integer',
+        'ayat_rec' => 'integer',
+        'ayat' => 'integer',
+    ];
 
     public function user()
     {

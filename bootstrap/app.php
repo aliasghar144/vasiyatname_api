@@ -23,9 +23,14 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+
  $app->withFacades();
 
  $app->withEloquent();
+
+class_alias(Illuminate\Support\Facades\Artisan::class, 'Artisan');
+//
+
 
 /*
 |--------------------------------------------------------------------------

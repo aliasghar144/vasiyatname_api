@@ -12,8 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
             $table->dateTime('date');
-            $table->integer('amount');
-            $table->string('description');
+            $table->bigInteger('amount');
+            $table->boolean('payed')->default(false);
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

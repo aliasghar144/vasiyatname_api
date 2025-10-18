@@ -14,6 +14,24 @@
 |
 */
 
+use Illuminate\Support\Facades\DB;
+
+//$router->get('/test-db', function() {
+//    try {
+//        DB::connection()->getPdo();
+//        return "Database connection OK!";
+//    } catch (\Exception $e) {
+//        return "Database connection failed: " . $e->getMessage();
+//    }
+//});
+
+$router->get('/run-migrations', function () {
+    DB::connection()->getPdo();
+
+    \Artisan::call('migrate:fresh', ["--force" => true]);
+    return "Migrations executed!";
+});
+
 
 $router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () use ($router) {
     $router->post('/auth/check_mobile', 'AuthController@checkMobile');
@@ -39,7 +57,7 @@ $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' 
 });
 
 $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
-    
+
     $router->group(['prefix' => 'prayers'], function () use ($router) {
         $router->get('/', 'PrayersController@index');
         $router->put('/', 'PrayersController@update');
@@ -48,6 +66,14 @@ $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' 
     $router->group(['prefix' => 'fasting'], function () use ($router) {
         $router->get('/', 'FastingController@index');
         $router->put('/', 'FastingController@update');
+    });
+
+    $router->group(['prefix' => 'khums'], function () use ($router) {
+        $router->get('/', 'KhumsController@index');
+        $router->get('/details/{id}', 'KhumsController@details');
+        $router->post('/', 'KhumsController@store');
+        $router->put('/{id}', 'KhumsController@update');
+        $router->delete('/{id}', 'KhumsController@destroy');
     });
 
     //    $router->group(['prefix'=>'claim'],function()use($router){

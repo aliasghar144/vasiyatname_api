@@ -4,28 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Debt extends Model
-{
-    protected $table = 'debts';
+class Khums extends  Model{
+
+    protected $table = 'khums';
 
     protected $fillable = [
         'user_id',
-        'from',
-        'debt_type',
-        'due_date',
-        'bank_name',
+        'date',
         'amount',
         'description',
+        'payed',
     ];
-
-    public $timestamps = true;
-
 
     protected $casts = [
         'amount' => 'integer',
-        'bank_name' => 'date',
+        'date' => 'date',
         'user_id' => 'integer',
+        'payed' => 'boolean',
     ];
+
+    public $timestamps = true;
 
     public function user()
     {

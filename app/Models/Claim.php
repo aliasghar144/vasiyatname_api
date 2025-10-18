@@ -16,6 +16,11 @@ class Claim extends Model
         'status',
     ];
 
+    protected $casts = [
+        'amount' => 'integer',
+        'user_id' => 'integer',
+    ];
+
     // ارتباط با کاربر
     public function user()
     {

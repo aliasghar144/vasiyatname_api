@@ -26,7 +26,6 @@ class FastingController extends BaseController
             ]);
         }
 
-
         $data = [
             'fasting' => ['id' => 0, 'title' => 'روزه قضا قطعی',     'value' => $fasting->fasting],
             'fasting_rec' => ['id' => 1, 'title' => 'روزه قضا غیر قطعی',     'value' => $fasting->fasting_rec],
@@ -46,20 +45,20 @@ class FastingController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->error($validator->errors()->first(), ApiSlug::PRAYER_UPDATE_FAILED->value, 422);
+            return $this->error($validator->errors()->first(), ApiSlug::FASTING_UPDATE_FAILED->value, 422);
         }
 
-        $prayer = Fasting::firstOrCreate(['user_id' => $user->id]);
+        $fasting = Fasting::firstOrCreate(['user_id' => $user->id]);
 
-        $prayer->update($validator->validated());
+        $fasting->update($validator->validated());
 
         $data = [
-            'prayers' => [
-                ['id' => 0, 'title' => 'روزه قضا قطعی',     'value' => $prayer->fajr_prayer],
-                ['id' => 1, 'title' => 'روزه قضا غیر قطعی',     'value' => $prayer->dhuhr_prayer],
-            ],
+            'fasting' => ['id' => 0, 'title' => 'روزه قضا قطعی',     'value' => $fasting->fasting],
+            'fasting_rec' => ['id' => 1, 'title' => 'روزه قضا غیر قطعی',     'value' => $fasting->fasting_rec],
+
         ];
 
-        return $this->success($data, ApiSlug::PRAYER_UPDATED->value);
+
+        return $this->success($data, ApiSlug::FASTING_UPDATED->value);
     }
 }

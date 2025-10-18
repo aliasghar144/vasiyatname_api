@@ -33,7 +33,7 @@ class ClaimController extends BaseController
         $user = auth()->user();
         $claim = Claim::where('user_id', $user->id)
             ->where('id', $id)
-            ->first(); // یا ->get() اگر میخوای collection
+            ->first();
         if (!$claim) {
             return $this->error('طلب یافت نشد', ApiSlug::CLAIM_NOTFOUND->value);
         }
@@ -72,7 +72,7 @@ class ClaimController extends BaseController
         if (!$claim) {
             return $this->error(
                 'Claim not found or you do not have permission to update it',
-                ApiSlug::PRAYER_REMOVE_FAILED->value,
+                ApiSlug::CLAIM_UPDATED_FAILED->value,
                 404
             );
         }
