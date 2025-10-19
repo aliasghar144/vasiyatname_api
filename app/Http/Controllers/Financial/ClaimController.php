@@ -47,7 +47,7 @@ class ClaimController extends BaseController
 
         $validator = Validator::make($request->all(), [
             'from' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|string',
             'description' => 'nullable|string',
             'status' => 'in:pending,received',
             'claim_type' => 'in:financial,none_financial',
@@ -79,7 +79,7 @@ class ClaimController extends BaseController
 
         $validator = Validator::make($request->all(), [
             'from' => 'sometimes|required|string|max:255',
-            'amount' => 'sometimes|required|numeric|min:0',
+            'amount' => 'sometimes|required|string',
             'status' => 'in:pending,received',
             'claim_type' => 'in:financial,none_financial',
             'description' => 'nullable|string',

@@ -22,8 +22,6 @@ class Debt extends Model
 
 
     protected $casts = [
-        'amount' => 'integer',
-        'bank_name' => 'date',
         'user_id' => 'integer',
     ];
 

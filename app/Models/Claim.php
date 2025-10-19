@@ -17,7 +17,6 @@ class Claim extends Model
     ];
 
     protected $casts = [
-        'amount' => 'integer',
         'user_id' => 'integer',
     ];
 

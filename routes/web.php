@@ -76,6 +76,14 @@ $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' 
         $router->delete('/{id}', 'KhumsController@destroy');
     });
 
+    $router->group(['prefix' => 'zakat'], function () use ($router) {
+        $router->get('/', 'ZakatController@index');
+        $router->get('/details/{id}', 'ZakatController@details');
+        $router->post('/', 'ZakatController@store');
+        $router->put('/{id}', 'ZakatController@update');
+        $router->delete('/{id}', 'ZakatController@destroy');
+    });
+
     //    $router->group(['prefix'=>'claim'],function()use($router){
     //        $router->get('/', 'ClaimController@index');
     //        $router->post('/', 'ClaimController@store');

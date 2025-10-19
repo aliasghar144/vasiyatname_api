@@ -44,7 +44,7 @@ class DebtController extends BaseController
                 'debt_type' => 'required|in:mardomi,banki',
                 'bank_name' => 'string',
                 'description' => 'string',
-                'amount' => 'integer',
+                'amount' => 'string',
                 'due_date' => 'date',
             ]);
 
@@ -79,7 +79,7 @@ class DebtController extends BaseController
             }
 
             $validator = Validator::make($request->all(), [
-                'amount' => 'sometimes|integer',
+                'amount' => 'sometimes|string',
                 'due_date' => 'sometimes|date',
                 'from' => 'string',
                 'debt_type' => 'required|in:mardomi,banki',
