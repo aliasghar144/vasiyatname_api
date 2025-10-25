@@ -19,12 +19,17 @@ class CreateUsersTable extends Migration
             $table->dateTime('birth_date')->nullable();
             $table->string('birth_loc')->nullable();
             $table->string('national_code', 10)->nullable();
+            $table->string('reminder_interval')->default('1 day'); //'1 day', '1 week', '1 month'
+            $table->boolean('show_notif')->default(true); //'1 day', '1 week', '1 month'
             $table->boolean('is_married')->default(false);
             $table->integer('children_count')->default(0);
             $table->integer('wife_count')->default(0);
             $table->string('province')->nullable();
             $table->string('city')->nullable();
             $table->string('address')->nullable();
+            $table->string('fcmToken')->nullable();
+            $table->string('app_version')->nullable()->default('101');
+            $table->timestamp('last_seen_at')->nullable();
             $table->timestamps();
         });
     }

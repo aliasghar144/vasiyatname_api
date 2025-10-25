@@ -39,7 +39,14 @@ class ProfileController extends BaseController
         //     $data['birth_date'] = jalaliToGregorian($parts[0], $parts[1], $parts[2]);
         // }
 
-        $user = User::firstOrCreate(['mobile' => $data['mobile']], $data);
+        $user = auth()->user();
+
+        if (!$user) {
+            return $this->error('کاربر احراز هویت نشده است.', ApiSlug::UNAUTHORIZED->value, 401);
+        }
+
+        unset($data['mobile']);
+
         $user->update($data);
 
         return $this->success($user, ApiSlug::PROFILE_UPDATED->value);
@@ -68,6 +75,8 @@ public function logout(Request $request): \Illuminate\Http\JsonResponse
     }
 
     $user->tokens()->delete();
+    $user->fcmToken = null;
+    $user->save();
 
     return $this->success(null, ApiSlug::LOGOUT_SUCCESS->value);
 }

@@ -14,6 +14,7 @@
 |
 */
 
+use App\Models\AppSetting;
 use Illuminate\Support\Facades\DB;
 
 //$router->get('/test-db', function() {
@@ -32,13 +33,38 @@ $router->get('/run-migrations', function () {
     return "Migrations executed!";
 });
 
+$router->post('/fcm-test', 'FcmController@sendTest');
 
+
+
+/////////////
+/// auth
+////////////
 $router->group(['prefix' => 'login', 'middleware' => 'throttle'], function () use ($router) {
     $router->post('/auth/check_mobile', 'AuthController@checkMobile');
     $router->post('/auth/verify_otp', 'AuthController@verifyOtp');
 });
 
+/////////////
+/// Update Last Seen
+////////////
+$router->get('/ping', [
+    'middleware' => ['sanctum', 'updateLastSeen'],
+    function () {
+        return response()->json(['success' => true, 'message' => 'Ping received']);
+    }
+]);
 
+/////////////
+/// Update Version
+////////////
+$router->get('/app_version', 'AppSettingController@appVersion');
+
+
+
+/////////////
+/// Financial
+////////////
 $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' => 'Financial'], function () use ($router) {
     $router->group(['prefix' => 'debts'], function () use ($router) {
         $router->get('/', 'DebtController@index');
@@ -56,6 +82,49 @@ $router->group(['prefix' => 'financial', 'middleware' => 'sanctum', 'namespace' 
     });
 });
 
+
+/////////////
+/// Religious Duty
+////////////
+$router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
+
+    $router->group(['prefix' => 'prayers'], function () use ($router) {
+        $router->get('/', 'PrayersController@index');
+        $router->put('/', 'PrayersController@update');
+    });
+
+    $router->group(['prefix' => 'fasting'], function () use ($router) {
+        $router->get('/', 'FastingController@index');
+        $router->put('/', 'FastingController@update');
+    });
+
+    $router->group(['prefix' => 'khums'], function () use ($router) {
+        $router->get('/', 'KhumsController@index');
+        $router->get('/details/{id}', 'KhumsController@details');
+        $router->post('/', 'KhumsController@store');
+        $router->put('/{id}', 'KhumsController@update');
+        $router->delete('/{id}', 'KhumsController@destroy');
+    });
+
+    $router->group(['prefix' => 'zakat'], function () use ($router) {
+        $router->get('/', 'ZakatController@index');
+        $router->get('/details/{id}', 'ZakatController@details');
+        $router->post('/', 'ZakatController@store');
+        $router->put('/{id}', 'ZakatController@update');
+        $router->delete('/{id}', 'ZakatController@destroy');
+    });
+
+    //    $router->group(['prefix'=>'claim'],function()use($router){
+    //        $router->get('/', 'ClaimController@index');
+    //        $router->post('/', 'ClaimController@store');
+    //        $router->put('/{id}', 'ClaimController@update');
+    //        $router->delete('/{id}', 'ClaimController@destroy');
+    //    });
+});
+
+/////////////
+/// None Financial
+////////////
 $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
 
     $router->group(['prefix' => 'prayers'], function () use ($router) {
@@ -93,6 +162,20 @@ $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' 
 });
 
 
+/////////////
+/// Notification
+////////////
+$router->group(['prefix' => 'notification', 'middleware' => 'sanctum','namespace' => 'Notification'], function () use ($router) {
+    $router->get('/', 'NotificationController@list');
+    $router->post('/read/{id}', 'NotificationController@markAsRead');
+    $router->put('/notif_state', 'NotificationController@updateNotifState');
+});
+
+
+
+/////////////
+/// Profile
+////////////
 $router->group([
     'prefix' => 'user',
     'middleware' => 'sanctum',

@@ -32,13 +32,18 @@ class User extends Model implements AuthenticatableContract
         'wife_count',
         'province',
         'city',
-        'address'
+        'address',
+        'last_seen_at',
+        'fcmToken',
+        'show_notif',
+        'app_version',
     ];
 
     public $timestamps = true;
 
     protected $casts = [
         'mobile' => 'string',
+        'app_version' => 'string',
         'first_name' => 'string',
         'last_name' => 'string',
         'province' => 'string',
@@ -47,6 +52,7 @@ class User extends Model implements AuthenticatableContract
         'national_code' => 'string',
         'children_count' => 'integer',
         'is_married' => 'bool',
+        'show_notif' => 'bool',
         'wife_count' => 'integer',
         'birth_date' => 'date',
     ];

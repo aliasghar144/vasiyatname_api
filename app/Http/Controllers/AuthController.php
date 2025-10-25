@@ -51,6 +51,8 @@ class AuthController extends BaseController
         $validator = Validator::make($request->all(), [
             'mobile' => 'required|string|min:10|max:15',
             'otp' => 'required|numeric|digits:4',
+            'fcmToken' => 'string',
+            'app_version' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -67,15 +69,20 @@ class AuthController extends BaseController
             return $this->error('کد OTP نادرست است', ApiSlug::OTP_INVALID->value, 400);
         }
 
-        // اصلاح: استفاده از first + create به جای firstOrCreate
         $user = User::where('mobile', $request->mobile)->first();
         if (!$user) {
-            $user = User::create(['mobile' => $request->mobile]);
+            $user = User::create(['mobile' => $request->mobile,
+                'last_seen_at' => Carbon::now(),
+                'fcmToken'=>$request->fcmToken,
+                'app_version'=> $request->app_version ?? '101',
+            ]);
         }
 
         Cache::forget('otp_' . $request->mobile);
 
         $token = $user->createToken('vasiyat_app',['read', 'write'],Carbon::now()->addDays(30))->plainTextToken;
+
+        $user = User::where('mobile', $request->mobile)->first();
 
         return $this->success([
             'user' => $user,

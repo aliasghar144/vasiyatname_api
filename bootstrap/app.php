@@ -80,6 +80,7 @@ $app->configure('auth');
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'updateLastSeen' => App\Http\Middleware\UpdateLastSeen::class,
     'sanctum' => App\Http\Middleware\SanctumAuth::class,
     'throttle' => App\Http\Middleware\ThrottleRequests::class,
 
@@ -102,6 +103,7 @@ $app->routeMiddleware([
 
 $app->register(Illuminate\Database\MigrationServiceProvider::class);
 $app->register(Illuminate\Auth\AuthServiceProvider::class);
+
 //$app->register(Laravel\Sanctum\SanctumServiceProvider::class);
 
 //$app->register(Laravel\Sanctum\SanctumServiceProvider::class);

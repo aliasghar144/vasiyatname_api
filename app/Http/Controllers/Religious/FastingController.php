@@ -14,10 +14,8 @@ class FastingController extends BaseController
     {
         $user = auth()->user();
 
-        // یک ردیف برای هر کاربر کافی است
         $fasting = Fasting::where('user_id', $user->id)->first();
 
-        // اگر هنوز رکوردی وجود ندارد، ایجاد کن
         if (!$fasting) {
             $fasting = Fasting::create([
                 'user_id' => $user->id,
