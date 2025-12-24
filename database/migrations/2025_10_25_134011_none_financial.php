@@ -11,14 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('none_financial', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('subject');
+            $table->enum('type', ['tohmat', 'ghyebat', 'abro', 'azar'])->default('tohmat');
+            $table->text('description')->nullable();
+            $table->boolean('payed')->default(false);
+            $table->timestamps();
+        });
     }
 
     /**
-     * Reverse the migrations.
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('none_financial');
     }
 };

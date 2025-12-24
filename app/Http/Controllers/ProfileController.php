@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 
 use App\Enums\ApiSlug;
+use App\Models\Claim;
+use App\Models\Debt;
+use App\Models\Fasting;
+use App\Models\Khums;
+use App\Models\NoneFinancial;
+use App\Models\Prayer;
 use App\Models\User;
+use App\Models\Zakat;
 use Illuminate\Http\Request;
 
 class ProfileController extends BaseController
@@ -23,6 +30,7 @@ class ProfileController extends BaseController
             'province',
             'city',
             'address',
+            'is_married',
             'mobile',
             'email',
             'home_phone',
@@ -54,32 +62,128 @@ class ProfileController extends BaseController
 
     public function getInformation(Request $request): \Illuminate\Http\JsonResponse
     {
-                $user = auth()->user();
-        $data = User::where('id', $user->id)->get();
-        if($data){
-        return $this->success($data);
-        }else{
-        return $this->error('کابر یافت نشد',ApiSlug::PROFILE_NOT_FOUND->value);
+        $user = auth()->user();
 
+        if (!$user) {
+            return $this->error('کاربر یافت نشد', ApiSlug::PROFILE_NOT_FOUND->value);
         }
+
+        $completed = 0;
+        $total = 8;
+        $nextRoute = null;
+        $nextTitle = null;
+
+        // 1️⃣ profile
+        $profileCompleted = !empty($user->first_name) && !empty($user->national_code);
+        if ($profileCompleted) {
+            $completed++;
+        } else {
+            $nextRoute = '/base/home/profile';
+            $nextTitle = 'تکمیل پروفایل';
+        }
+
+        // 2️⃣ claims
+        if ($nextRoute === null) {
+            if (Claim::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/financial/claims';
+                $nextTitle = 'افزودن طلب';
+            }
+        }
+
+        // 3️⃣ dept
+        if ($nextRoute === null) {
+            if (Debt::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/financial/dept';
+                $nextTitle = 'افزودن بدهی';
+            }
+        }
+
+        // 4️⃣ prayers
+        if ($nextRoute === null) {
+            if (Prayer::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/religious_duties/prayers';
+                $nextTitle = 'افودن نماز قضا';
+
+            }
+        }
+
+        // 5️⃣ fasting
+        if ($nextRoute === null) {
+            if (Fasting::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/religious_duties/fasting';
+                $nextTitle = 'افزودن روزه';
+
+            }
+        }
+
+        // 6️⃣ khums
+        if ($nextRoute === null) {
+            if (Khums::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/religious_duties/khums';
+                $nextTitle = 'افزودن خمس';
+
+            }
+        }
+
+        // 7️⃣ zakat
+        if ($nextRoute === null) {
+            if (Zakat::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/religious_duties/zakat';
+                $nextTitle = 'افزودن زکات';
+
+            }
+        }
+
+        // 8️⃣ non financial
+        if ($nextRoute === null) {
+            if (NoneFinancial::where('user_id', $user->id)->exists()) {
+                $completed++;
+            } else {
+                $nextRoute = '/base/home/non_financial';
+                $nextTitle = 'افزودن حق الناس';
+
+            }
+        }
+
+        $progress = round($completed / $total, 2);
+
+        return $this->success([
+            'user' => $user,
+            'progress' => $progress,
+            'next_route' => $nextRoute,
+            'next_title' => $nextTitle,
+            'completed_sections' => $completed,
+            'total_sections' => $total,
+        ]);
     }
 
 
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = $request->user();
 
-public function logout(Request $request): \Illuminate\Http\JsonResponse
-{
-    $user = $request->user();
+        if (!$user) {
+            return $this->error('کاربر یافت نشد.', ApiSlug::PROFILE_NOT_FOUND->value, 404);
+        }
 
-    if (!$user) {
-        return $this->error('کاربر یافت نشد.', ApiSlug::PROFILE_NOT_FOUND->value, 404);
+        $user->tokens()->delete();
+        $user->fcmToken = null;
+        $user->save();
+
+        return $this->success(null, ApiSlug::LOGOUT_SUCCESS->value);
     }
-
-    $user->tokens()->delete();
-    $user->fcmToken = null;
-    $user->save();
-
-    return $this->success(null, ApiSlug::LOGOUT_SUCCESS->value);
-}
 
 }
 

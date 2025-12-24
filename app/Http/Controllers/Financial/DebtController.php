@@ -10,6 +10,7 @@ use App\Models\Debt;
 
 class DebtController extends BaseController
 {
+
     public function index()
     {
         $user = auth()->user();
@@ -23,6 +24,7 @@ class DebtController extends BaseController
         ]);
     }
 
+
     public function detailsindex($id)
     {
         $user = auth()->user();
@@ -34,6 +36,7 @@ class DebtController extends BaseController
         }
         return $this->success($debt,ApiSlug::DEBT_FOUND->value);
     }
+
 
     public function store(Request $request)
     {
