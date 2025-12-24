@@ -125,40 +125,12 @@ $router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' 
 /////////////
 /// None Financial
 ////////////
-$router->group(['prefix' => 'religious', 'middleware' => 'sanctum', 'namespace' => 'Religious'], function () use ($router) {
-
-    $router->group(['prefix' => 'prayers'], function () use ($router) {
-        $router->get('/', 'PrayersController@index');
-        $router->put('/', 'PrayersController@update');
-    });
-
-    $router->group(['prefix' => 'fasting'], function () use ($router) {
-        $router->get('/', 'FastingController@index');
-        $router->put('/', 'FastingController@update');
-    });
-
-    $router->group(['prefix' => 'khums'], function () use ($router) {
-        $router->get('/', 'KhumsController@index');
-        $router->get('/details/{id}', 'KhumsController@details');
-        $router->post('/', 'KhumsController@store');
-        $router->put('/{id}', 'KhumsController@update');
-        $router->delete('/{id}', 'KhumsController@destroy');
-    });
-
-    $router->group(['prefix' => 'zakat'], function () use ($router) {
-        $router->get('/', 'ZakatController@index');
-        $router->get('/details/{id}', 'ZakatController@details');
-        $router->post('/', 'ZakatController@store');
-        $router->put('/{id}', 'ZakatController@update');
-        $router->delete('/{id}', 'ZakatController@destroy');
-    });
-
-    //    $router->group(['prefix'=>'claim'],function()use($router){
-    //        $router->get('/', 'ClaimController@index');
-    //        $router->post('/', 'ClaimController@store');
-    //        $router->put('/{id}', 'ClaimController@update');
-    //        $router->delete('/{id}', 'ClaimController@destroy');
-    //    });
+$router->group(['prefix' => 'none_financial', 'middleware' => 'sanctum', 'namespace' => 'NoneFinancial'], function () use ($router) {
+    $router->get('/', 'NoneFinancialController@index');
+    $router->get('/details/{id}', 'NoneFinancialController@detailsindex');
+    $router->post('/', 'NoneFinancialController@store');
+    $router->put('/{id}', 'NoneFinancialController@update');
+    $router->delete('/{id}', 'NoneFinancialController@destroy');
 });
 
 
@@ -171,6 +143,23 @@ $router->group(['prefix' => 'notification', 'middleware' => 'sanctum','namespace
     $router->put('/notif_state', 'NotificationController@updateNotifState');
 });
 
+
+/////////////
+/// Reports
+////////////
+$router->group(['prefix' => 'report', 'middleware' => 'sanctum','namespace' => 'Report'], function () use ($router) {
+    $router->get('/', 'ReportController@get');
+    $router->get('/rec', 'WillTextController@recAndReqGet');
+    $router->post('/rec', 'WillTextController@recAndReqStore');
+    $router->post('/ceremony', 'WillTextController@typeOfCeremonyStore');
+});
+
+/////////////
+/// SETTING
+////////////
+$router->group(['prefix' => 'setting', 'middleware' => 'sanctum','namespace' => 'Setting'], function () use ($router) {
+    $router->post('/send_feedback', 'SettingController@sendFeedBack');
+});
 
 
 /////////////

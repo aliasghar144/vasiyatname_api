@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('app_setting', function (Blueprint $table) {
-            $table->integer('app_version')->nullable();
-            $table->integer('force_version')->nullable();
+            $table->integer('app_version')->default(100)->nullable();
+            $table->integer('force_version')->default(100)->nullable();
 
         });
     }

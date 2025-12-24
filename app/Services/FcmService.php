@@ -14,7 +14,9 @@ class FcmService
         $this->http = new Client();
 //        $path = storage_path(env('FIREBASE_CREDENTIALS'));
 //        $credentials = json_decode(file_get_contents($path), true);
-        $credentials = json_decode(file_get_contents(env('FIREBASE_CREDENTIALS')), true);
+        $serviceAccountPath = storage_path(env('FIREBASE_CREDENTIALS'));
+
+        $credentials = json_decode(file_get_contents($serviceAccountPath), true);
 
         $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
         $creds = new \Google\Auth\Credentials\ServiceAccountCredentials($scopes, $credentials);
