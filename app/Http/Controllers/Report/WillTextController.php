@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Report;
 use App\Enums\ApiSlug;
 use App\Models\Claim;
 use App\Models\RecAndReq;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\BaseController;
@@ -16,12 +17,28 @@ class WillTextController extends BaseController
     public function recAndReqGet(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = auth()->user();
-        $claim = RecAndReq::where('user_id', $user->id)
-            ->first();
+
+        $claim = RecAndReq::where('user_id', $user->id)->first();
+
         if (!$claim) {
-            return $this->error('توصیه یافت نشد', ApiSlug::REC_AND_REQ_NOT_FOUND->value);
+            return $this->success([
+                'id' => 0,
+                'user_id' => $user->id,
+                'req_description' => '',
+                'type_ceremony_des' => '',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ], ApiSlug::REC_AND_REQ_NOT_FOUND->value);
         }
-        return $this->success($claim);
+
+        return $this->success([
+            'id' => $claim->id,
+            'user_id' => $claim->user_id,
+            'req_description' => $claim->req_description,
+            'type_ceremony_des' => $claim->type_ceremony_des,
+            'created_at' => $claim->created_at,
+            'updated_at' => $claim->updated_at,
+        ]);
     }
 
     public function recAndReqStore(Request $request): \Illuminate\Http\JsonResponse

@@ -10,11 +10,14 @@ use App\Models\Fasting;
 use App\Models\Khums;
 use App\Models\NoneFinancial;
 use App\Models\Prayer;
+use App\Models\RecAndReq;
 use App\Models\Zakat;
 use Illuminate\Http\Request;
 
 class ReportController extends BaseController
 {
+
+
 
     public function get(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -28,6 +31,7 @@ class ReportController extends BaseController
         $claimsNonFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->count();
         $debtMardomiSum = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->sum('amount');
         $debtBankiSum = Debt::where('user_id', $user->id)->where('debt_type', 'banki')->count();
+        $recAndReq = RecAndReq::where('user_id', $user->id)->first();
 
         $prayerTotals = Prayer::where('user_id', $user->id)
             ->selectRaw('
@@ -92,6 +96,11 @@ class ReportController extends BaseController
                 'abro' => $noneFinancialAbroCount,
                 'azar' => $noneFinancialAzarCount,
             ],
+            'recAndReq' => [
+                'rec' => $recAndReq->req_description ?? '',
+                'req' => $recAndReq->type_ceremony_des ?? '',
+            ]
+
         ]);
     }
 

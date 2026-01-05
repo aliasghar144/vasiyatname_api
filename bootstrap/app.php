@@ -101,6 +101,7 @@ $app->routeMiddleware([
 |
 */
 
+
 $app->register(Illuminate\Database\MigrationServiceProvider::class);
 $app->register(Illuminate\Auth\AuthServiceProvider::class);
 

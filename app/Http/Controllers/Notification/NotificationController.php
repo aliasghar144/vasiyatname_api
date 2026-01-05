@@ -67,26 +67,5 @@ class NotificationController extends BaseController
         return response()->json(['success' => true]);
     }
 
-    //اپدیت وضعیت نمایش نوتیفیکیشن
-    public function updateNotifState(Request $request){
 
-        $validator = Validator::make($request->all(), [
-            'show_notif' => 'required|bool',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error($validator->errors()->first('mobile'), ApiSlug::MOBILE_REQUIRED->value, 400);
-        }
-
-        $user = auth()->user();
-
-        if (!$user) {
-            return $this->error('کاربر احراز هویت نشده است.', ApiSlug::UNAUTHORIZED->value, 401);
-        }
-
-
-        $user->update($validator->validated());
-
-        return $this->success($user, ApiSlug::NOTIFICATION_STATE->value);
-    }
 }

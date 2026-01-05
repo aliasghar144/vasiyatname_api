@@ -35,6 +35,12 @@ $router->get('/run-migrations', function () {
 
 $router->post('/fcm-test', 'FcmController@sendTest');
 
+if (!function_exists('public_path')) {
+    function public_path($path = '')
+    {
+        return __DIR__ . '/../../public' . ($path ? '/' . $path : '');
+    }
+}
 
 
 /////////////
@@ -140,7 +146,6 @@ $router->group(['prefix' => 'none_financial', 'middleware' => 'sanctum', 'namesp
 $router->group(['prefix' => 'notification', 'middleware' => 'sanctum','namespace' => 'Notification'], function () use ($router) {
     $router->get('/', 'NotificationController@list');
     $router->post('/read/{id}', 'NotificationController@markAsRead');
-    $router->put('/notif_state', 'NotificationController@updateNotifState');
 });
 
 
@@ -159,6 +164,7 @@ $router->group(['prefix' => 'report', 'middleware' => 'sanctum','namespace' => '
 ////////////
 $router->group(['prefix' => 'setting', 'middleware' => 'sanctum','namespace' => 'Setting'], function () use ($router) {
     $router->post('/send_feedback', 'SettingController@sendFeedBack');
+    $router->post('/update_notif_setting', 'SettingController@updateNotificationSetting');
 });
 
 

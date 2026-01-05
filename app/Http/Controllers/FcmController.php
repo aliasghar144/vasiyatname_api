@@ -51,7 +51,7 @@ class FcmController extends Controller
             );
 
             Notifications::create([
-                'user_id' => 2,
+                'user_id' => 5,
                 'title' => $validated['title'],
                 'body'  => $validated['body'],
                 'data'  => $data,

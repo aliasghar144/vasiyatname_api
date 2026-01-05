@@ -31,6 +31,7 @@ class ProfileController extends BaseController
             'city',
             'address',
             'is_married',
+            'is_male',
             'mobile',
             'email',
             'home_phone',
@@ -157,7 +158,9 @@ class ProfileController extends BaseController
             }
         }
 
-        $progress = round($completed / $total, 2);
+        $progress = ($completed == 0 || $total == 0)
+            ? '0.0'
+            : number_format(round($completed / $total, 2), 1, '.', '');
 
         return $this->success([
             'user' => $user,

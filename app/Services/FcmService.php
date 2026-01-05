@@ -37,11 +37,22 @@ class FcmService
         $payload = [
             'message' => [
                 'token' => $fcmToken,
+
                 'notification' => [
                     'title' => $title,
                     'body'  => $body,
                 ],
-                'data' => $data ?? [],
+
+                'android' => [
+                    'priority' => 'HIGH',
+                    'notification' => [
+                        'channel_id' => 'default_channel',
+                        'sound' => 'default',
+                        'visibility' => 'PUBLIC',
+                    ],
+                ],
+
+                'data' => array_map('strval', $data ?? []),
             ],
         ];
 

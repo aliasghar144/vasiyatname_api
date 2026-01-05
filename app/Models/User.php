@@ -31,11 +31,14 @@ class User extends Model implements AuthenticatableContract
         'children_count',
         'wife_count',
         'province',
+        'is_male',
         'city',
         'address',
         'last_seen_at',
         'fcmToken',
         'show_notif',
+        'reminder_interval',
+        'last_reminder_sent_at',
         'app_version',
     ];
 
@@ -48,11 +51,13 @@ class User extends Model implements AuthenticatableContract
         'last_name' => 'string',
         'province' => 'string',
         'address' => 'string',
+        'is_male' => 'bool',
         'city' => 'string',
         'national_code' => 'string',
         'children_count' => 'integer',
         'is_married' => 'bool',
         'show_notif' => 'bool',
+        'reminder_interval' => 'string',
         'wife_count' => 'integer',
         'birth_date' => 'date',
     ];
