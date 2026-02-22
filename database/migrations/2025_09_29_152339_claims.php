@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('claims', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
-            $table->string('from');       // طلب از
+            $table->string('subject');       // موضوع
+            $table->string('person')->nullable();       // طلب از شخص
+            $table->string('person_phone')->nullable();       // شماره تماس شخص
             $table->enum('claim_type', ['financial', 'none_financial'])->default('financial'); // وضعیت
             $table->string('amount'); // مبلغ
             $table->text('description')->nullable();   // توضیحات

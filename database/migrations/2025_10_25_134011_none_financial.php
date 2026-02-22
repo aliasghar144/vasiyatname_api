@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('subject');
+            $table->string('person')->nullable();       // حق الناس از شخص
+            $table->string('person_phone')->nullable();       // شماره تماس شخص
             $table->enum('type', ['tohmat', 'ghyebat', 'abro', 'azar'])->default('tohmat');
             $table->text('description')->nullable();
             $table->boolean('payed')->default(false);

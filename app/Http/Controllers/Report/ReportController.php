@@ -18,7 +18,6 @@ class ReportController extends BaseController
 {
 
 
-
     public function get(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = auth()->user();
@@ -27,9 +26,16 @@ class ReportController extends BaseController
             return $this->error('کاربر یافت نشد', ApiSlug::PROFILE_NOT_FOUND->value);
         }
 
-        $claimsFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->sum('amount');
-        $claimsNonFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->count();
+
+        $claimsFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->whereNotIn('status', ['received'])->sum('amount');
+        $claimsFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone']);
+
+        $claimsNonFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->whereNotIn('status', ['received'])->count();
+        $claimsNonFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone']);
+
         $debtMardomiSum = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->sum('amount');
+        $debtMardomi = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->get(['person', 'person_phone']);
+
         $debtBankiSum = Debt::where('user_id', $user->id)->where('debt_type', 'banki')->count();
         $recAndReq = RecAndReq::where('user_id', $user->id)->first();
 
@@ -61,28 +67,52 @@ class ReportController extends BaseController
         $fasting = $fastingRow?->fasting ?? 0;
         $fastingRec = $fastingRow?->fasting_rec ?? 0;
 
-        $khumsSum = Khums::where('user_id', $user->id)->sum('amount');
-        $zakatSum = Zakat::where('user_id', $user->id)->sum('amount');
+        $khumsSum = Khums::where('user_id', $user->id)->where('payed',false)->sum('amount');
+        $zakatSum = Zakat::where('user_id', $user->id)->where('payed',false)->sum('amount');
 
 
-        $noneFinancialTohmatCount = NoneFinancial::where('user_id', $user->id)->where('type', 'tohmat')->count();
-        $noneFinancialGheybatCount = NoneFinancial::where('user_id', $user->id)->where('type', 'ghyebat')->count();
-        $noneFinancialAbroCount = NoneFinancial::where('user_id', $user->id)->where('type', 'abro')->count();
-        $noneFinancialAzarCount = NoneFinancial::where('user_id', $user->id)->where('type', 'azar')->count();
+        $noneFinancialTohmatCount = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'tohmat')->count();
+        $noneFinancialTohmatUsers = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'tohmat')->get(['person', 'person_phone']);
 
+        $noneFinancialGheybatCount = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'ghyebat')->count();
+        $noneFinancialGheybatUsers = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'ghyebat')->get(['person', 'person_phone']);
+
+        $noneFinancialAbroCount = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'abro')->count();
+        $noneFinancialAbroUsers = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'abro')->get(['person', 'person_phone']);
+
+        $noneFinancialAzarCount = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'azar')->count();
+        $noneFinancialAzarUsers = NoneFinancial::where('user_id', $user->id)->where('payed',false)->where('type', 'azar')->get(['person', 'person_phone']);
+
+        $prayer = Prayer::where('user_id', $user->id)->first();
 
         return $this->success([
             'financial' => [
-                'claims_financial' => $claimsFinancialSum,
-                'claims_none_financial' => $claimsNonFinancialSum,
+                'claims_financial_total_price' => $claimsFinancialSum,
+                'claims_financial_user_list' => $claimsFinancial,
+                'claims_none_financial_total_price' => $claimsNonFinancialSum,
+                'claims_none_financial_user_list' => $claimsNonFinancial,
                 'debt_banki' => $debtBankiSum,
-                'debt_mardomi' => $debtMardomiSum,
+                'debt_mardomi_total_price' => $debtMardomiSum,
+                'debt_mardomi_user_list' => $debtMardomi,
             ],
             'religious_duties' => [
                 'prayers' => [
-                    'daily' => $dailyPrayers,
-                    'qadha' => $recPrayers,
-                    'ayat' => $ayatPrayers,
+                    'pray_details' => [
+                        'fajr' => $prayer?->fajr_prayer ?? 0,
+                        'dhuhr_prayer' => $prayer?->dhuhr_prayer ?? 0,
+                        'asr_prayer' => $prayer?->asr_prayer ?? 0,
+                        'maghrib_prayer' => $prayer?->maghrib_prayer ?? 0,
+                        'isha_prayer' => $prayer?->isha_prayer ?? 0,
+
+                        'fajr_prayer_rec' => $prayer?->fajr_prayer_rec ?? 0,
+                        'dhuhr_prayer_rec' => $prayer?->dhuhr_prayer_rec ?? 0,
+                        'asr_prayer_rec' => $prayer?->asr_prayer_rec ?? 0,
+                        'maghrib_prayer_rec' => $prayer?->maghrib_prayer_rec ?? 0,
+                        'isha_prayer_rec' => $prayer?->isha_prayer_rec ?? 0,
+                    ],
+                    'total_daily' => $dailyPrayers,
+                    'total_qadha' => $recPrayers,
+                    'total_ayat' => $ayatPrayers,
                 ],
                 'fasting' => $fasting,
                 'fasting_req' => $fastingRec,
@@ -92,9 +122,13 @@ class ReportController extends BaseController
 
             'none_financial' => [
                 'tohmat' => $noneFinancialTohmatCount,
+                'tohmat_users' => $noneFinancialTohmatUsers,
                 'ghyebat' => $noneFinancialGheybatCount,
+                'ghyebat_users' => $noneFinancialGheybatUsers,
                 'abro' => $noneFinancialAbroCount,
+                'abro_users' => $noneFinancialAbroUsers,
                 'azar' => $noneFinancialAzarCount,
+                'azar_users' => $noneFinancialAzarUsers,
             ],
             'recAndReq' => [
                 'rec' => $recAndReq->req_description ?? '',

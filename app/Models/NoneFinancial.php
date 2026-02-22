@@ -9,7 +9,8 @@ class NoneFinancial extends Model
 
     protected $fillable = [
         'user_id',
-        'subject',
+        'person',
+        'person_phone',
         'type',
         'description',
         'payed'

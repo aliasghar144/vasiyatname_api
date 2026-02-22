@@ -10,7 +10,9 @@ class Debt extends Model
 
     protected $fillable = [
         'user_id',
-        'from',
+        'subject',
+        'person',
+        'person_phone',
         'debt_type',
         'due_date',
         'bank_name',

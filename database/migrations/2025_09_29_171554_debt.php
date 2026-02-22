@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('debts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // صاحب طلب
-            $table->string('from')->nullable();
+            $table->string('subject');       // موضوع
+            $table->string('person')->nullable();       // طلب از شخص
+            $table->string('person_phone')->nullable();       // شماره تماس شخص
             $table->enum('debt_type', ['mardomi', 'banki'])->default('mardomi');
             $table->string('bank_name')->nullable();
             $table->string('amount')->nullable();

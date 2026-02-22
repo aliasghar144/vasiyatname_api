@@ -14,9 +14,9 @@ class ClaimController extends BaseController
     public function index(Request $request)
     {
         $user = auth()->user();
-        $financial = Claim::where('user_id',$user->id)->where('claim_type', 'financial')->get(['id', 'from', 'amount']);
-        $noneFinancial = Claim::where('user_id',$user->id)->where('claim_type', 'none_financial')->get(['id', 'from', 'description']);
-        $claim = Claim::where('user_id', $user->id)->get(['id', 'from', 'amount']);
+        $financial = Claim::where('user_id',$user->id)->where('claim_type', 'financial')->get(['id', 'person', 'amount']);
+        $noneFinancial = Claim::where('user_id',$user->id)->where('claim_type', 'none_financial')->get(['id', 'person', 'description']);
+        $claim = Claim::where('user_id', $user->id)->get(['id', 'person', 'amount']);
 
         if (!$financial || !$noneFinancial) {
             return $this->error('طلب یافت نشد', ApiSlug::CLAIM_NOTFOUND->value);
@@ -46,8 +46,9 @@ class ClaimController extends BaseController
         $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
-            'from' => 'required|string|max:255',
+            'person' => 'nullable|string|max:255',
             'amount' => 'required|string',
+            'person_phone' => 'nullable|string|max:13',
             'description' => 'nullable|string',
             'status' => 'in:pending,received',
             'claim_type' => 'in:financial,none_financial',
@@ -78,8 +79,9 @@ class ClaimController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'from' => 'sometimes|required|string|max:255',
+            'person' => 'nullable|string|max:255',
             'amount' => 'sometimes|required|string',
+            'person_phone' => 'nullable|string|max:13',
             'status' => 'in:pending,received',
             'claim_type' => 'in:financial,none_financial',
             'description' => 'nullable|string',

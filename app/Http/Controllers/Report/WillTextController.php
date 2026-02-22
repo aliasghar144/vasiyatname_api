@@ -50,7 +50,7 @@ class WillTextController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'req_description' => 'required|string|max:255',
+            'req_description' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -63,7 +63,11 @@ class WillTextController extends BaseController
 
         $recAndReq = RecAndReq::updateOrCreate(
             ['user_id' => $user->id],
-            $validator->validated()
+            [
+                'req_description' => $request->filled('req_description')
+                    ? $request->req_description
+                    : null
+            ]
         );
 
         return $this->success(
@@ -82,7 +86,7 @@ class WillTextController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'type_ceremony_des' => 'required|string|max:255',
+            'type_ceremony_des' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -95,7 +99,11 @@ class WillTextController extends BaseController
 
         $recAndReq = RecAndReq::updateOrCreate(
             ['user_id' => $user->id],
-            $validator->validated()
+            [
+                'type_ceremony_des' => $request->filled('type_ceremony_des')
+                    ? $request->type_ceremony_des
+                    : null
+            ]
         );
 
         return $this->success(

@@ -9,7 +9,9 @@ class Claim extends Model
 
     protected $fillable = [
         'user_id',
-        'from',
+        'subject',
+        'person',
+        'person_phone',
         'claim_type',
         'amount',
         'description',

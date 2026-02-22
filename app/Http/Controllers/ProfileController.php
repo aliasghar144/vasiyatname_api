@@ -10,6 +10,7 @@ use App\Models\Fasting;
 use App\Models\Khums;
 use App\Models\NoneFinancial;
 use App\Models\Prayer;
+use App\Models\RecAndReq;
 use App\Models\User;
 use App\Models\Zakat;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ class ProfileController extends BaseController
         }
 
         $completed = 0;
-        $total = 8;
+        $total = 9;
         $nextRoute = null;
         $nextTitle = null;
 
@@ -136,18 +137,7 @@ class ProfileController extends BaseController
             }
         }
 
-        // 7️⃣ zakat
-        if ($nextRoute === null) {
-            if (Zakat::where('user_id', $user->id)->exists()) {
-                $completed++;
-            } else {
-                $nextRoute = '/base/home/religious_duties/zakat';
-                $nextTitle = 'افزودن زکات';
-
-            }
-        }
-
-        // 8️⃣ non financial
+        // 7️⃣ non financial
         if ($nextRoute === null) {
             if (NoneFinancial::where('user_id', $user->id)->exists()) {
                 $completed++;
@@ -157,6 +147,42 @@ class ProfileController extends BaseController
 
             }
         }
+
+        // 8️⃣ rec
+        if ($nextRoute === null) {
+            $rec = RecAndReq::where('user_id', $user->id)->first();
+
+            if ($rec) {
+                if (!empty($rec->type_ceremony_des)) {
+                    $completed++;
+                } else {
+                    $nextRoute = '/base/home/will_text_screen_main/funeral_details';
+                    $nextTitle = 'افزودن نوع مراسم و محل دفن';
+                }
+            } else {
+                $nextRoute = '/base/home/will_text_screen_main/funeral_details';
+                $nextTitle = 'افزودن نوع مراسم و محل دفن';
+            }
+        }
+
+
+        // 9️⃣ request
+        if ($nextRoute === null) {
+            $rec = RecAndReq::where('user_id', $user->id)->first();
+
+            if ($rec) {
+                if (!empty($rec->req_description)) {
+                    $completed++;
+                } else {
+                    $nextRoute = '/base/home/will_text_screen_main/suggestion_request_screen';
+                    $nextTitle = 'افزودن توصیه و درخواست';
+                }
+            } else {
+                $nextRoute = '/base/home/will_text_screen_main/suggestion_request_screen';
+                $nextTitle = 'افزودن توصیه و درخواست';
+            }
+        }
+
 
         $progress = ($completed == 0 || $total == 0)
             ? '0.0'

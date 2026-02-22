@@ -15,7 +15,7 @@ class DebtController extends BaseController
     {
         $user = auth()->user();
 
-        $mardomi = Debt::where('user_id',$user->id)->where('debt_type', 'mardomi')->get(['id', 'from', 'amount']);
+        $mardomi = Debt::where('user_id',$user->id)->where('debt_type', 'mardomi')->get(['id', 'person', 'amount']);
         $banki = Debt::where('user_id',$user->id)->where('debt_type', 'banki')->get(['id', 'bank_name', 'amount']);
 
         return $this->success([
@@ -43,7 +43,8 @@ class DebtController extends BaseController
         try {
             $user = auth()->user();
             $validator = Validator::make($request->all(), [
-                'from' => 'string',
+                'person' => 'nullable|string|max:255',
+                'person_phone' => 'nullable|string|max:13',
                 'debt_type' => 'required|in:mardomi,banki',
                 'bank_name' => 'string',
                 'description' => 'string',
@@ -84,7 +85,8 @@ class DebtController extends BaseController
             $validator = Validator::make($request->all(), [
                 'amount' => 'sometimes|string',
                 'due_date' => 'sometimes|date',
-                'from' => 'string',
+                'person' => 'nullable|string|max:255',
+                'person_phone' => 'nullable|string|max:13',
                 'debt_type' => 'required|in:mardomi,banki',
                 'bank_name' => 'string',
                 'description' => 'string',

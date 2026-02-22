@@ -14,7 +14,7 @@ class NoneFinancialController extends BaseController
     public function index(Request $request)
     {
         $user = auth()->user();
-        $data = NoneFinancial::where('user_id',$user->id)->get(['id', 'subject', 'description']);
+        $data = NoneFinancial::where('user_id',$user->id)->get(['id', 'person', 'description']);
 
         if (!$data) {
             return $this->error('طلب یافت نشد', ApiSlug::NONE_FINANCIAL_NOTFOUND->value);
@@ -41,7 +41,8 @@ class NoneFinancialController extends BaseController
         $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
-            'subject' => 'required|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'person_phone' => 'nullable|string|max:13',
             'description' => 'nullable|string',
             'type' => 'in:tohmat,ghyebat,abro,azar',
         ]);
@@ -71,7 +72,8 @@ class NoneFinancialController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'subject' => 'sometimes|required|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'person_phone' => 'nullable|string|max:13',
             'type' => 'in:tohmat,ghyebat,abro,azar',
             'description' => 'nullable|string',
             'payed' => 'sometimes|bool',
