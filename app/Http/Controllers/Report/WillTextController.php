@@ -50,7 +50,7 @@ class WillTextController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'req_description' => 'nullable|string|max:255',
+            'req_description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +76,6 @@ class WillTextController extends BaseController
         );
     }
 
-
     public function typeOfCeremonyStore(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = auth()->user();
@@ -86,7 +85,7 @@ class WillTextController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'type_ceremony_des' => 'nullable|string|max:255',
+            'type_ceremony_des' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {

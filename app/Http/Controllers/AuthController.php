@@ -168,7 +168,6 @@ class AuthController extends BaseController
         ], ApiSlug::VERIFIED_SUCCESSFULLY->value);
     }
 
-
     function verifycode(Request $request){
         try {
             $request->validate([

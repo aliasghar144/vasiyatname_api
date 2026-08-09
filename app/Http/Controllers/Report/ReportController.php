@@ -28,15 +28,15 @@ class ReportController extends BaseController
 
 
         $claimsFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->whereNotIn('status', ['received'])->sum('amount');
-        $claimsFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone']);
+        $claimsFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone','amount']);
 
         $claimsNonFinancialSum = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->whereNotIn('status', ['received'])->count();
-        $claimsNonFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone']);
+        $claimsNonFinancial = Claim::where('user_id', $user->id)->where('claim_type', 'none_financial')->whereNotIn('status', ['received'])->get(['person', 'person_phone','amount']);
 
         $debtMardomiSum = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->sum('amount');
-        $debtMardomi = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->get(['person', 'person_phone']);
+        $debtMardomi = Debt::where('user_id', $user->id)->where('debt_type', 'mardomi')->get(['person', 'person_phone','amount']);
 
-        $debtBankiSum = Debt::where('user_id', $user->id)->where('debt_type', 'banki')->count();
+        $debtBankiSum = Debt::where('user_id', $user->id)->where('debt_type', 'banki',)->count();
         $recAndReq = RecAndReq::where('user_id', $user->id)->first();
 
         $prayerTotals = Prayer::where('user_id', $user->id)
@@ -64,8 +64,8 @@ class ReportController extends BaseController
 
         $fastingRow = Fasting::where('user_id', $user->id)->first();
 
-        $fasting = $fastingRow?->fasting ?? 0;
-        $fastingRec = $fastingRow?->fasting_rec ?? 0;
+        $fasting = $fastingRow?->fasting_rec ?? 0;
+        $fastingRec = $fastingRow?->fasting ?? 0;
 
         $khumsSum = Khums::where('user_id', $user->id)->where('payed',false)->sum('amount');
         $zakatSum = Zakat::where('user_id', $user->id)->where('payed',false)->sum('amount');
